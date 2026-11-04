@@ -1,0 +1,52 @@
+﻿# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE & Agent local files
+.vscode/
+.idea/
+.claude/
+.engram/
+.freebuff/
+.remember/
+*.swp
+*.swo
+
+# OS & WSL metadata
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+
+# Temporary & backup files
+*.tmp
+*.temp
+*.bak
+.cache/
+
+# Python
+__pycache__/
+*.pyc
+
+# Non-prototype project artifacts (keep local only)
+AGENTS.md
+docs/
+docs-word/
+diagram/
+prototype-v2.1/
+prototype/screenshots/
+deck-content.md
+build-ppt2.py
+*.pptx
+agrimind_*.png
