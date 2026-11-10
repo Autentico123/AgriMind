@@ -42,13 +42,15 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 
-# Non-prototype project artifacts (keep local only)
+# Design references and working notes (kept local only)
 AGENTS.md
+BRIEF.md
 docs/
 docs-word/
 diagram/
+prototype/
 prototype-v2.1/
-prototype/screenshots/
+shared/
 deck-content.md
 build-ppt2.py
 *.pptx
