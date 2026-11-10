@@ -1,32 +1,28 @@
-# React + TypeScript + Vite
+# AgriMind — Admin Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React + Vite + TypeScript web console for agricultural administrators.
 
-Currently, two official plugins are available:
+Online-only and English-only. Talks to the AgriMind API at `VITE_API_BASE_URL`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Structure
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```text
+src/pages/        one per admin screen (Dashboard, Users, Knowledge Base, Announcements, Audit Logs)
+src/components/   tables, filters, modals, DNF rule builder primitives
+src/api/          typed client for /api/v1/admin/*
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Commands
+
+```bash
+npm install
+npm run dev       # http://localhost:5173
+npm run build
+npx tsc --noEmit -p tsconfig.app.json
+```
+
+## Rules
+
+- All API communication lives in `src/api/`, never inline in components.
+- TypeScript strict mode is enabled; `any` is not permitted.
+- Match the approved design tokens in the design system; do not restyle screens.
