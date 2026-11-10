@@ -38,6 +38,9 @@ Thumbs.db
 # Python
 __pycache__/
 *.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
 
 # Non-prototype project artifacts (keep local only)
 AGENTS.md
