@@ -14,13 +14,9 @@ build/
 .env.*
 !.env.example
 
-# IDE & Agent local files
+# IDE
 .vscode/
 .idea/
-.claude/
-.engram/
-.freebuff/
-.remember/
 *.swp
 *.swo
 
@@ -41,17 +37,3 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
-
-# Design references and working notes (kept local only)
-AGENTS.md
-BRIEF.md
-docs/
-docs-word/
-diagram/
-prototype/
-prototype-v2.1/
-shared/
-deck-content.md
-build-ppt2.py
-*.pptx
-agrimind_*.png
