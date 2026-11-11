@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Tests, typecheck, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: agrimind
+          POSTGRES_PASSWORD: agrimind
+          POSTGRES_DB: agrimind
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U agrimind"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://agrimind:agrimind@localhost:5432/agrimind
+      DATABASE_URL_UNPOOLED: postgresql://agrimind:agrimind@localhost:5432/agrimind
+      JWT_SECRET: ci-secret-not-used-in-production-0123456789abcdef
+      APP_ENV: test
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            admin/package-lock.json
+            mobile/package-lock.json
+
+      - name: Apply database migrations
+        working-directory: backend
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install --quiet --upgrade pip
+          .venv/bin/pip install --quiet -r requirements.txt
+          .venv/bin/alembic upgrade head
+
+      - name: Install dependencies and run checks
+        run: scripts/ci.sh
+
+      - name: Verify the working tree is clean
+        run: git diff --exit-code

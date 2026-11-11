@@ -12,12 +12,13 @@ is left unchanged.
 from __future__ import annotations
 
 import json
+import os
 from collections.abc import Iterator
 from decimal import Decimal
 
 import pytest
 from sqlalchemy import text
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from core.database import SessionLocal
@@ -29,6 +30,30 @@ from models import (
     GrowthStage,
     KnowledgeBase,
     User,
+)
+
+
+def _database_available() -> bool:
+    """True when the configured PostgreSQL database answers a trivial query.
+
+    The schema tests need a real PostgreSQL because the schema relies on JSONB
+    path expressions, partial indexes, and named composite CHECK constraints
+    that SQLite cannot enforce. When no database is reachable they are skipped
+    rather than failed, so the suite still runs on a bare checkout.
+    """
+    try:
+        with SessionLocal() as session:
+            session.execute(text("select 1"))
+        return True
+    except SQLAlchemyError:
+        return False
+
+
+_DB_AVAILABLE = _database_available()
+
+requires_database = pytest.mark.skipif(
+    not _DB_AVAILABLE,
+    reason="No PostgreSQL database reachable; set DATABASE_URL to run schema tests.",
 )
 
 EXPECTED_TABLES = {
@@ -131,6 +156,7 @@ def _rule(**overrides: object) -> KnowledgeBase:
     return KnowledgeBase(**defaults)
 
 
+@requires_database
 def test_all_documented_tables_exist(db: Session) -> None:
     rows = db.execute(
         text(
@@ -142,6 +168,7 @@ def test_all_documented_tables_exist(db: Session) -> None:
     assert EXPECTED_TABLES <= present, f"missing: {sorted(EXPECTED_TABLES - present)}"
 
 
+@requires_database
 def test_named_composite_constraints_exist(db: Session) -> None:
     rows = db.execute(
         text(
@@ -165,6 +192,7 @@ def test_named_composite_constraints_exist(db: Session) -> None:
         ("action_key without conditions", {"conditions": None}),
     ],
 )
+@requires_database
 def test_kb_rule_complete(
     db: Session, seeded: dict[str, int], description: str, overrides: dict
 ) -> None:
@@ -173,6 +201,7 @@ def test_kb_rule_complete(
         db.flush()
 
 
+@requires_database
 def test_kb_action_matches_category(db: Session, seeded: dict[str, int]) -> None:
     db.add(
         _rule(
@@ -192,6 +221,7 @@ def test_kb_action_matches_category(db: Session, seeded: dict[str, int]) -> None
         {"metric": "rain_probability", "operator": "equals", "value": 60},
     ],
 )
+@requires_database
 def test_kb_conditions_shape(
     db: Session, seeded: dict[str, int], condition: dict
 ) -> None:
@@ -202,6 +232,7 @@ def test_kb_conditions_shape(
         db.flush()
 
 
+@requires_database
 def test_valid_rule_is_accepted(db: Session, seeded: dict[str, int]) -> None:
     rule = _rule(crop_type_id=seeded["crop_type_id"])
     db.add(rule)
@@ -224,6 +255,7 @@ def test_valid_rule_is_accepted(db: Session, seeded: dict[str, int]) -> None:
         ),
     ],
 )
+@requires_database
 def test_users_auth_credential(
     db: Session, description: str, fields: dict
 ) -> None:
@@ -249,6 +281,7 @@ def test_users_auth_credential(
         ("status", "Pending", "status_values"),
     ],
 )
+@requires_database
 def test_user_enum_checks(
     db: Session, column: str, value: str, constraint: str
 ) -> None:
@@ -269,6 +302,7 @@ def test_user_enum_checks(
 
 
 @pytest.mark.parametrize("confidence", [Decimal("1.01"), Decimal("-0.01")])
+@requires_database
 def test_confidence_score_range(
     db: Session, seeded: dict[str, int], confidence: Decimal
 ) -> None:
@@ -284,6 +318,7 @@ def test_confidence_score_range(
         db.flush()
 
 
+@requires_database
 def test_crop_enum_checks(db: Session, seeded: dict[str, int]) -> None:
     crop = db.get(Crop, seeded["crop_id"])
     assert crop is not None
@@ -292,6 +327,7 @@ def test_crop_enum_checks(db: Session, seeded: dict[str, int]) -> None:
         db.flush()
 
 
+@requires_database
 def test_farm_name_unique_per_active_farm(db: Session, seeded: dict[str, int]) -> None:
     db.add(
         Farm(
