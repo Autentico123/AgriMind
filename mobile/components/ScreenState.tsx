@@ -5,7 +5,7 @@
  * skeleton blocks rather than spinners, per the same section.
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from './Button';
@@ -19,7 +19,9 @@ export function Skeleton({
   height?: number;
   width?: number | `${number}%`;
 }) {
-  const pulse = useRef(new Animated.Value(0.4)).current;
+  // `useState` with a lazy initialiser keeps the Animated.Value stable across
+  // renders without reading a ref during render, which React forbids.
+  const [pulse] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
     const animation = Animated.loop(

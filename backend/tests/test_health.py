@@ -2,6 +2,7 @@
 
 import pytest
 from fastapi.testclient import TestClient
+from pydantic import ValidationError
 
 from core.config import Settings
 
@@ -25,17 +26,19 @@ def test_health_db_reports_reachable(client: TestClient) -> None:
     assert response.json() == {"status": "ok", "database": "reachable"}
 
 
-def test_settings_fail_fast_without_database_url(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_settings_fail_fast_without_database_url(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.setenv("JWT_SECRET", "test-secret-that-is-long-enough-for-validation")
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         Settings(_env_file=None)
 
 
 def test_settings_reject_short_jwt_secret(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("DATABASE_URL", "postgresql://user:pass@localhost:5432/agrimind")
     monkeypatch.setenv("JWT_SECRET", "too-short")
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         Settings(_env_file=None)
 
 

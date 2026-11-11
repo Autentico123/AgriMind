@@ -53,7 +53,9 @@ class AuditLog(Base):
     )
 
     __table_args__ = (
-        CheckConstraint(f"event_type IN {_EVENT_TYPES}", name="audit_event_type_values"),
+        CheckConstraint(
+            f"event_type IN {_EVENT_TYPES}", name="audit_event_type_values"
+        ),
         Index("ix_auditlogs_performed_by", "performed_by"),
         Index("ix_auditlogs_event_type", "event_type"),
         Index("ix_auditlogs_created_at", text("created_at DESC")),
@@ -74,7 +76,9 @@ class SyncQueue(Base):
     operation: Mapped[str] = mapped_column(Text, nullable=False)
     payload: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     status: Mapped[str] = mapped_column(Text, nullable=False, server_default="Pending")
-    retry_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    retry_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default="0"
+    )
     last_attempted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     error_message: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(

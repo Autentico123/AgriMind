@@ -9,3 +9,6 @@ bcrypt==5.0.0
 PyJWT==2.15.1
 pytest==9.2.0
 httpx==0.28.1
+
+# Linting and formatting (CI)
+ruff==0.17.4

@@ -12,9 +12,9 @@ concurrency:
 
 jobs:
   checks:
-    name: Tests, typecheck, and build
+    name: Lint, tests, typecheck, and build
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     services:
       postgres:
@@ -45,6 +45,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -55,7 +57,7 @@ jobs:
             admin/package-lock.json
             mobile/package-lock.json
 
-      - name: Apply database migrations
+      - name: Install backend dependencies and apply migrations
         working-directory: backend
         run: |
           python3 -m venv .venv
@@ -63,8 +65,17 @@ jobs:
           .venv/bin/pip install --quiet -r requirements.txt
           .venv/bin/alembic upgrade head
 
-      - name: Install dependencies and run checks
-        run: scripts/ci.sh
+      # --skip-install: the backend venv is already provisioned above, and the
+      # frontend installs happen inside this script from the lockfiles.
+      - name: Lint, test, typecheck, and build
+        run: scripts/ci.sh --skip-install
 
+      # `git diff --exit-code` alone misses untracked files, so check both.
       - name: Verify the working tree is clean
-        run: git diff --exit-code
+        run: |
+          git diff --exit-code
+          test -z "$(git status --porcelain)" || {
+            echo "Working tree is dirty after the build:"
+            git status --porcelain
+            exit 1
+          }

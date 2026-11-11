@@ -53,7 +53,8 @@ class KnowledgeBase(Base, TimestampMixin):
 
     knowledge_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     crop_type_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("CropTypes.crop_type_id", ondelete="RESTRICT"),
+        BigInteger,
+        ForeignKey("CropTypes.crop_type_id", ondelete="RESTRICT"),
         nullable=False,
     )
     growth_stage_id: Mapped[int | None] = mapped_column(
@@ -66,9 +67,7 @@ class KnowledgeBase(Base, TimestampMixin):
     # `none_as_null` is essential: a prose-only article must store SQL NULL, not
     # the JSON literal `null`, or `kb_rule_complete` and `kb_conditions_shape`
     # both reject the row. This is bind behaviour only — the DDL is unchanged.
-    conditions: Mapped[dict | list | None] = mapped_column(
-        JSONB(none_as_null=True)
-    )
+    conditions: Mapped[dict | list | None] = mapped_column(JSONB(none_as_null=True))
     action_key: Mapped[str | None] = mapped_column(Text)
     priority: Mapped[int] = mapped_column(Integer, nullable=False, server_default="100")
     status: Mapped[str] = mapped_column(Text, nullable=False, server_default="Draft")
@@ -96,18 +95,20 @@ class KnowledgeBase(Base, TimestampMixin):
         ),
         # The action must belong to the row's category.
         CheckConstraint(
-            "action_key IS NULL OR (action_key, category) IN (" + _ACTION_CATEGORY_PAIRS + ")",
+            "action_key IS NULL OR (action_key, category) IN ("
+            + _ACTION_CATEGORY_PAIRS
+            + ")",
             name="kb_action_matches_category",
         ),
         # Every condition row uses a catalog metric and operator.
         CheckConstraint(
             "conditions IS NULL OR "
             "(jsonb_typeof(conditions) = 'array' AND NOT jsonb_path_exists(conditions, "
-            "'$[*][*] ? (@.metric <> \"rain_probability\" && @.metric <> \"wind_speed\" "
-            "&& @.metric <> \"temperature\" && @.metric <> \"humidity\")') AND "
+            '\'$[*][*] ? (@.metric <> "rain_probability" && @.metric <> "wind_speed" '
+            '&& @.metric <> "temperature" && @.metric <> "humidity")\') AND '
             "NOT jsonb_path_exists(conditions, "
-            "'$[*][*] ? (@.operator <> \"gte\" && @.operator <> \"lte\" "
-            "&& @.operator <> \"between\")'))",
+            '\'$[*][*] ? (@.operator <> "gte" && @.operator <> "lte" '
+            '&& @.operator <> "between")\'))',
             name="kb_conditions_shape",
         ),
         Index("ix_knowledgebase_type_category", "crop_type_id", "category"),
@@ -117,9 +118,7 @@ class KnowledgeBase(Base, TimestampMixin):
             "crop_type_id",
             "category",
             "priority",
-            postgresql_where=text(
-                "conditions IS NOT NULL AND status = 'Published'"
-            ),
+            postgresql_where=text("conditions IS NOT NULL AND status = 'Published'"),
         ),
         # Article search (§A.5)
         Index(

@@ -88,7 +88,7 @@ def _decimal(value: float | int | None) -> Decimal | None:
 
 
 def _int(value: float | int | None) -> int | None:
-    return None if value is None else int(round(float(value)))
+    return None if value is None else round(float(value))
 
 
 def _parse_time(value: str) -> datetime:
@@ -139,7 +139,9 @@ class OpenMeteoProvider:
         except httpx.HTTPError as exc:  # network, timeout, non-2xx
             logger.warning(
                 "open-meteo request failed",
-                extra={"extra_fields": {"provider": self.name, "error": type(exc).__name__}},
+                extra={
+                    "extra_fields": {"provider": self.name, "error": type(exc).__name__}
+                },
             )
             raise WeatherProviderError(
                 "Weather service is unavailable. Please try again later."
@@ -206,9 +208,7 @@ class OpenMeteoProvider:
                 # aggregate in the documented schema, so it stays null.
                 temperature=_decimal(daily_block["temperature_2m_max"][i]),
                 humidity=None,
-                rain_probability=_int(
-                    daily_block["precipitation_probability_max"][i]
-                ),
+                rain_probability=_int(daily_block["precipitation_probability_max"][i]),
                 wind_speed=_decimal(daily_block["wind_speed_10m_max"][i]),
                 weather_condition=condition_from_wmo(daily_block["weather_code"][i]),
             )

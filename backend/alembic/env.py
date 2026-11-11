@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from alembic import context
 from core.config import get_settings
 from models import Base
 
@@ -33,9 +33,7 @@ _IGNORED_INDEXES = {"ix_knowledgebase_search"}
 
 
 def include_object(obj, name, type_, reflected, compare_to) -> bool:
-    if type_ == "index" and name in _IGNORED_INDEXES:
-        return False
-    return True
+    return not (type_ == "index" and name in _IGNORED_INDEXES)
 
 
 def run_migrations_offline() -> None:

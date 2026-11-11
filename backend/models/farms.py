@@ -1,6 +1,6 @@
 """Farms, crops and the crop-type lookup tables.
 
-Mirrors `database-design.md` §2–§5.
+Mirrors `database-design.md` §2-§5.
 """
 
 from __future__ import annotations
@@ -29,8 +29,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.base import Base, TimestampMixin
 
 if TYPE_CHECKING:
-    from models.records import FarmRecord
     from models.recommendations import AIRecommendation
+    from models.records import FarmRecord
     from models.users import User
 
 
@@ -50,7 +50,9 @@ class Farm(Base, TimestampMixin):
     farm_size: Mapped[Decimal | None] = mapped_column(Numeric(8, 2))
     farm_size_unit: Mapped[str | None] = mapped_column(Text)
     description: Mapped[str | None] = mapped_column(Text)
-    sync_version: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
+    sync_version: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default="1"
+    )
     last_modified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_deleted: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default="false"
@@ -102,7 +104,8 @@ class GrowthStage(Base):
 
     growth_stage_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     crop_type_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("CropTypes.crop_type_id", ondelete="RESTRICT"),
+        BigInteger,
+        ForeignKey("CropTypes.crop_type_id", ondelete="RESTRICT"),
         nullable=False,
     )
     stage_name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -132,24 +135,26 @@ class Crop(Base, TimestampMixin):
         BigInteger, ForeignKey("Farms.farm_id", ondelete="CASCADE"), nullable=False
     )
     crop_type_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("CropTypes.crop_type_id", ondelete="RESTRICT"),
+        BigInteger,
+        ForeignKey("CropTypes.crop_type_id", ondelete="RESTRICT"),
         nullable=False,
     )
     variety: Mapped[str | None] = mapped_column(String(100))
     planting_date: Mapped[date] = mapped_column(Date, nullable=False)
     expected_harvest_date: Mapped[date | None] = mapped_column(Date)
     growth_stage_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("GrowthStages.growth_stage_id", ondelete="RESTRICT"),
+        BigInteger,
+        ForeignKey("GrowthStages.growth_stage_id", ondelete="RESTRICT"),
         nullable=False,
     )
     status: Mapped[str] = mapped_column(Text, nullable=False, server_default="Growing")
     health_status: Mapped[str] = mapped_column(
         Text, nullable=False, server_default="Healthy"
     )
-    risk_level: Mapped[str] = mapped_column(
-        Text, nullable=False, server_default="Low"
+    risk_level: Mapped[str] = mapped_column(Text, nullable=False, server_default="Low")
+    sync_version: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default="1"
     )
-    sync_version: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
     last_modified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_deleted: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default="false"

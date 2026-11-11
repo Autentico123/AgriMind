@@ -1,4 +1,4 @@
-"""Schema invariants required by `docs/database-design.md` §1–§17 and §A.
+"""Schema invariants required by `docs/database-design.md` §1-§17 and §A.
 
 These run against a real PostgreSQL database because the schema relies on
 JSONB path expressions, partial indexes, and named composite CHECK constraints
@@ -12,7 +12,6 @@ is left unchanged.
 from __future__ import annotations
 
 import json
-import os
 from collections.abc import Iterator
 from decimal import Decimal
 
@@ -165,7 +164,7 @@ def test_all_documented_tables_exist(db: Session) -> None:
         )
     ).scalars()
     present = set(rows)
-    assert EXPECTED_TABLES <= present, f"missing: {sorted(EXPECTED_TABLES - present)}"
+    assert present >= EXPECTED_TABLES, f"missing: {sorted(EXPECTED_TABLES - present)}"
 
 
 @requires_database
@@ -225,9 +224,7 @@ def test_kb_action_matches_category(db: Session, seeded: dict[str, int]) -> None
 def test_kb_conditions_shape(
     db: Session, seeded: dict[str, int], condition: dict
 ) -> None:
-    db.add(
-        _rule(crop_type_id=seeded["crop_type_id"], conditions=[[condition]])
-    )
+    db.add(_rule(crop_type_id=seeded["crop_type_id"], conditions=[[condition]]))
     with pytest.raises(IntegrityError, match="kb_conditions_shape"):
         db.flush()
 
@@ -256,9 +253,7 @@ def test_valid_rule_is_accepted(db: Session, seeded: dict[str, int]) -> None:
     ],
 )
 @requires_database
-def test_users_auth_credential(
-    db: Session, description: str, fields: dict
-) -> None:
+def test_users_auth_credential(db: Session, description: str, fields: dict) -> None:
     base = {
         "first_name": "A",
         "last_name": "B",

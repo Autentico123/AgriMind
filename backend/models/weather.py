@@ -76,7 +76,8 @@ class WeatherAlert(Base):
 
     alert_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     weather_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("WeatherCache.weather_id", ondelete="RESTRICT"),
+        BigInteger,
+        ForeignKey("WeatherCache.weather_id", ondelete="RESTRICT"),
         nullable=False,
     )
     farm_id: Mapped[int] = mapped_column(

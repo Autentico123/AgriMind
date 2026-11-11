@@ -24,7 +24,7 @@ class Base(DeclarativeBase):
 
 
 class TimestampMixin:
-    """created_at / updated_at, as required by database-design.md §1–§17."""
+    """created_at / updated_at, as required by database-design.md §1-§17."""
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

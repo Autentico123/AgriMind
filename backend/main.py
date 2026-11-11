@@ -6,6 +6,7 @@ the health probes.
 """
 
 import logging
+from typing import Annotated
 
 from fastapi import Depends, FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -45,7 +46,10 @@ def health() -> dict[str, str]:
 
 
 @app.get("/api/v1/health/db", tags=["system"])
-def health_db(response: Response, db: Session = Depends(get_db)) -> dict[str, str]:
+def health_db(
+    response: Response,
+    db: Annotated[Session, Depends(get_db)],
+) -> dict[str, str]:
     """Readiness probe — confirms the database is reachable."""
     try:
         db.execute(text("select 1"))

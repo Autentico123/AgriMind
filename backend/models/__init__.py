@@ -1,11 +1,11 @@
-"""ORM models mirroring `docs/database-design.md` §1–§17.
+"""ORM models mirroring `docs/database-design.md` §1-§17.
 
 Importing this package registers every table on `Base.metadata`, which is what
 Alembic autogenerate compares against.
 """
 
-from models.base import Base
 from models.audit import AuditLog, SyncQueue
+from models.base import Base
 from models.farms import Crop, CropType, Farm, GrowthStage
 from models.knowledge import KnowledgeBase
 from models.notifications import Announcement, Notification

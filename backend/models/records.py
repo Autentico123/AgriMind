@@ -45,7 +45,9 @@ class FarmRecord(Base):
     quantity: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
     unit: Mapped[str | None] = mapped_column(Text)
     notes: Mapped[str | None] = mapped_column(Text)
-    sync_version: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
+    sync_version: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default="1"
+    )
     last_modified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     is_deleted: Mapped[bool] = mapped_column(
         Boolean, nullable=False, server_default="false"
@@ -62,7 +64,9 @@ class FarmRecord(Base):
             "('Planting','Irrigation','Fertilizer','Harvest','Pesticide','Pruning','Note')",
             name="activity_type_values",
         ),
-        CheckConstraint("unit IS NULL OR unit IN ('kg','L','sacks')", name="unit_values"),
+        CheckConstraint(
+            "unit IS NULL OR unit IN ('kg','L','sacks')", name="unit_values"
+        ),
         Index(
             "ix_farmrecords_crop_activity_date",
             "crop_id",
