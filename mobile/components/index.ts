@@ -26,3 +26,4 @@ export {
 } from './ScreenState';
 export { StatRow, StatTile, type StatTileProps, type StatTileVariant } from './StatTile';
 export { TextField, type TextFieldProps } from './TextField';
+export { Icon, iconNames, type IconName, type IconProps } from './Icon';

@@ -22,7 +22,9 @@ import {
   OfflineBanner,
   StatRow,
   StatTile,
+  Icon,
   TextField,
+  iconNames,
 } from './components';
 import { colors, spacing, typography } from './theme';
 
@@ -105,6 +107,16 @@ export default function App() {
             />
           </View>
 
+          <Text style={styles.sectionTitle}>Icons</Text>
+          <View style={styles.iconGrid}>
+            {iconNames.map((name) => (
+              <View key={name} style={styles.iconCell}>
+                <Icon name={name} size={22} color={colors.forest} />
+                <Text style={styles.iconLabel}>{name}</Text>
+              </View>
+            ))}
+          </View>
+
           <Text style={styles.sectionTitle}>States</Text>
           <EmptyState
             title="No farms yet. Add your first farm to get started."
@@ -144,4 +156,16 @@ const styles = StyleSheet.create({
   },
   stack: { gap: spacing.space3 },
   row: { flexDirection: 'row', gap: spacing.space2, flexWrap: 'wrap' },
+  iconGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.space2 },
+  iconCell: {
+    width: 96,
+    alignItems: 'center',
+    gap: spacing.space1,
+    paddingVertical: spacing.space2,
+    borderWidth: 1.5,
+    borderColor: colors.mist,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+  },
+  iconLabel: { fontSize: 10, color: colors.stone },
 });

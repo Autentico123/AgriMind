@@ -5,7 +5,7 @@
  * in later phases; this is the design-system smoke surface.
  */
 
-import { Badge, Button, Card, StatTile } from './components';
+import { Badge, Button, Card, Icon, StatTile, iconNames } from './components';
 
 export default function App() {
   return (
@@ -52,6 +52,38 @@ export default function App() {
           <Button variant="primary" disabled>
             Disabled
           </Button>
+        </div>
+
+        <Card label="Iconography" title="Icon set">
+          The prototype uses emoji as placeholders; the app uses Lucide icons.
+        </Card>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+            gap: 'var(--space-3)',
+          }}
+        >
+          {iconNames.map((name) => (
+            <div
+              key={name}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-2)',
+                padding: 'var(--space-2)',
+                border: '1.5px solid var(--color-mist)',
+                borderRadius: 'var(--radius-base)',
+                background: 'var(--color-white)',
+                fontSize: 12,
+                color: 'var(--color-text-secondary)',
+              }}
+            >
+              <Icon name={name} color="var(--color-forest)" />
+              <span>{name}</span>
+            </div>
+          ))}
         </div>
 
         <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
