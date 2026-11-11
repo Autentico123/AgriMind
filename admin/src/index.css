@@ -1,111 +1,301 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/*
+ * Base styles and shared primitives for the admin dashboard.
+ *
+ * Flat and structured per docs/design-system.md §5: 8px radius, 1.5px borders,
+ * no shadows except modals. Inter is the only typeface.
+ */
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+@import './theme.css';
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 body {
   margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  background: var(--color-dew);
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+h2,
+h3 {
+  margin: 0;
+  color: var(--color-text-primary);
+  line-height: 1.3;
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+  font-size: var(--text-page-title);
+  font-weight: var(--weight-bold);
 }
+
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+  font-size: var(--text-section-title);
+  font-weight: var(--weight-bold);
 }
+
+h3 {
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+}
+
 p {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+/* ---- Accessibility (design-system.md §11) ---- */
+
+:focus-visible {
+  outline: 2px solid var(--color-forest);
+  outline-offset: 2px;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Loading skeletons pulse rather than spin (design-system.md §9). */
+@keyframes agrimind-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---- Buttons (§6.1) ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius-base);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--color-forest);
+  color: var(--color-white);
+}
+
+.btn--gold {
+  background: var(--color-gold);
+  color: var(--color-white);
+}
+
+.btn--secondary {
+  background: var(--color-white);
+  color: var(--color-forest);
+  border: 1.5px solid var(--color-forest);
+}
+
+.btn--danger {
+  background: var(--color-white);
+  color: var(--color-danger);
+  border: 1.5px solid var(--color-danger);
+}
+
+.btn--small {
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: var(--text-body-small);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* ---- Cards (§6.2) ---- */
+
+.card {
+  background: var(--color-white);
+  border: 1.5px solid var(--color-mist);
+  border-radius: var(--radius-base);
+  padding: var(--space-4);
+}
+
+.card__label {
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-leaf);
+}
+
+/* ---- Stat tiles (§6.3) ---- */
+
+.stat-tile {
+  background: var(--color-dew);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-stat);
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.stat-tile__value {
+  display: block;
+  font-size: var(--text-stat-small);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.stat-tile__label {
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--color-leaf);
+}
+
+/* ---- Badges (§6.4) ---- */
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-label);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.3px;
+}
+
+.badge--green { background: var(--color-mist); color: #065f46; }
+.badge--gold { background: var(--color-gold-light); color: var(--color-gold-deep); }
+.badge--blue { background: var(--color-sky-light); color: #0369a1; }
+.badge--violet { background: var(--color-violet-light); color: #6d28d9; }
+.badge--amber { background: var(--color-amber-light); color: #92400e; }
+.badge--red { background: var(--color-danger-light); color: #991b1b; }
+.badge--gray { background: var(--color-bg-gray); color: var(--color-text-secondary); }
+
+/* ---- Form inputs (§6.6) ---- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field__label {
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.field__input,
+.field__select,
+.field__textarea {
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--color-mist);
+  border-radius: var(--radius-base);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  color: var(--color-text-primary);
+  background: var(--color-white);
+  outline: none;
+}
+
+.field__input:focus,
+.field__select:focus,
+.field__textarea:focus {
+  border-color: var(--color-forest);
+}
+
+.field__input:disabled,
+.field__select:disabled,
+.field__textarea:disabled {
+  opacity: 0.5;
+  background: var(--color-bg-gray);
+}
+
+.field__input--error {
+  border-color: var(--color-danger);
+}
+
+.field__error {
+  font-size: var(--text-body-small);
+  color: var(--color-danger);
+}
+
+/* ---- Alerts (§6.5) ---- */
+
+.alert {
+  border-radius: var(--radius-base);
+  border-left: 4px solid;
+  padding: 12px 14px;
+}
+
+.alert__title {
+  font-size: 13px;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.alert__message {
+  font-size: var(--text-body-small);
+  color: var(--color-text-muted);
+}
+
+.alert--warning { background: #fffbeb; border-left-color: var(--color-amber); }
+.alert--success { background: #f0fdf4; border-left-color: var(--color-leaf); }
+.alert--ai { background: var(--color-violet-light); border-left-color: var(--color-violet); }
+.alert--weather { background: var(--color-sky-light); border-left-color: var(--color-sky); }
+.alert--danger { background: #fef2f2; border-left-color: var(--color-danger); }
+
+/* ---- Modal (§5) ---- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(27 67 50 / 35%);
+  z-index: 50;
+}
+
+.modal {
+  width: min(480px, calc(100% - 32px));
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--color-white);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-modal);
+  padding: var(--space-6);
+  box-shadow: 0 -2px 16px rgb(0 0 0 / 8%);
 }

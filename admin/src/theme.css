@@ -1,0 +1,74 @@
+/*
+ * Design tokens for the admin dashboard.
+ * Source: docs/design-system.md §10 (web admin `theme.css`). Values are copied
+ * verbatim — change the spec first, not this file.
+ */
+
+:root {
+  --color-forest-deep: #1b4332;
+  --color-forest: #2d6a4f;
+  --color-leaf: #52b788;
+  --color-mint: #95d5b2;
+  --color-mist: #d1fae5;
+  --color-dew: #f0f7ee;
+
+  --color-gold: #e9b84a;
+  --color-gold-deep: #b45309;
+  --color-gold-light: #fffbf0;
+  --color-gold-border: #f0d080;
+
+  --color-sky: #0ea5e9;
+  --color-sky-mid: #7dd3fc;
+  --color-sky-light: #e0f2fe;
+
+  --color-violet: #7c3aed;
+  --color-violet-mid: #a78bfa;
+  --color-violet-light: #ede9fe;
+
+  --color-amber: #f4a261;
+  --color-amber-deep: #d97706;
+  --color-amber-light: #fef3c7;
+
+  --color-danger: #dc2626;
+  --color-danger-light: #fee2e2;
+
+  --color-text-primary: #1b4332;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6b7280;
+  --color-text-subtle: #9ca3af;
+  --color-white: #ffffff;
+  --color-bg-gray: #f3f4f6;
+
+  --radius-sm: 4px;
+  --radius-stat: 6px;
+  --radius-base: 8px;
+  --radius-modal: 12px;
+  --radius-full: 9999px;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Spacing scale, 4px base (design-system.md §3) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Typography scale (design-system.md §2) */
+  --text-page-title: 28px;
+  --text-section-title: 22px;
+  --text-card-title: 17px;
+  --text-body: 14px;
+  --text-body-small: 12px;
+  --text-label: 11px;
+  --text-stat: 36px;
+  --text-stat-small: 22px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+}
