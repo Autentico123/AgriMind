@@ -37,3 +37,6 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
+
+# Neon CLI local state
+.neon

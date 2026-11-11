@@ -2,15 +2,19 @@
 
 Routers only handle HTTP; business logic belongs in `services/`
 (`docs/architecture.md` §2.3). This file wires configuration, logging, CORS and
-the health probe used by Phase 0 acceptance checks.
+the health probes.
 """
 
 import logging
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 from core.config import get_settings
+from core.database import get_db
 from core.logging import configure_logging
 
 settings = get_settings()
@@ -36,5 +40,17 @@ if settings.cors_origins:
 
 @app.get("/api/v1/health", tags=["system"])
 def health() -> dict[str, str]:
-    """Liveness probe for local development and deployment checks."""
+    """Liveness probe — does not touch the database."""
     return {"status": "ok"}
+
+
+@app.get("/api/v1/health/db", tags=["system"])
+def health_db(response: Response, db: Session = Depends(get_db)) -> dict[str, str]:
+    """Readiness probe — confirms the database is reachable."""
+    try:
+        db.execute(text("select 1"))
+    except SQLAlchemyError:
+        logger.exception("database health check failed")
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+        return {"status": "unavailable", "database": "unreachable"}
+    return {"status": "ok", "database": "reachable"}
